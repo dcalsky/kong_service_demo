@@ -40,3 +40,15 @@ func (e Exception) WithMessage(msg string) Exception {
 	e.Message = msg
 	return e
 }
+
+func PanicIf(expression bool, exception Exception) {
+	if expression {
+		panic(exception)
+	}
+}
+
+func PanicIfErr(err error, exception Exception) {
+	if err != nil {
+		panic(exception)
+	}
+}

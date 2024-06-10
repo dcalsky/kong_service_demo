@@ -27,4 +27,13 @@ func registerHttp(r *server.Hertz) {
 	r.NoRoute(func(c context.Context, ctx *app.RequestContext) {
 		ctx.JSON(http.StatusNotFound, nil)
 	})
+
+	v1 := r.Group("/api/v1")
+	{
+		v1.POST("/CreateKongService", handler.CreateKongService)
+		v1.POST("/DescribeKongService", handler.DescribeKongService)
+		v1.POST("/DeleteKongService", handler.DeleteKongService)
+		v1.POST("/ListKongServices", handler.ListKongServices)
+		v1.POST("/UpdateKongService", handler.UpdateKongService)
+	}
 }

@@ -16,7 +16,7 @@ func TrafficLogger() app.HandlerFunc {
 		ctx = logid.SetLogId(ctx, logid.NewLogId())
 		reqStr := base.DumpHertzRequest(&c.Request)
 		startAt := time.Now()
-		logs.Infof(ctx, "[TrafficLogger] http request at %s, %v", startAt.String(), reqStr)
+		logs.Infof(ctx, "[TrafficLogger] http request at %s, %s", startAt.String(), reqStr)
 		c.Next(ctx)
 		responseAt := time.Now()
 		logs.Infof(ctx, "[TrafficLogger] http response cost: %d ms, body: %s", responseAt.Sub(startAt).Milliseconds(), string(c.GetResponse().Body()))

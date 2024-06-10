@@ -1,12 +1,9 @@
 package base
 
 import (
-	"context"
-
 	"github.com/cloudwego/hertz/pkg/app"
 
 	"github.com/dcalsky/kong_service_demo/internal/common/env"
-	"github.com/dcalsky/kong_service_demo/internal/common/logid"
 )
 
 type ErrorObj struct {
@@ -28,22 +25,22 @@ type CommonResponse struct {
 	Data any
 }
 
-func RespondJson(ctx context.Context, c *app.RequestContext, data any) {
+func RespondJson(kongArgs KongArgs, c *app.RequestContext, data any) {
 	c.JSON(200, CommonResponse{
-		Meta: &ResponseMetaData{RequestId: logid.LogId(ctx)},
+		Meta: &ResponseMetaData{RequestId: kongArgs.RequestId},
 		Data: data,
 	})
 	c.Abort()
 }
 
-func RespondError(ctx context.Context, c *app.RequestContext, except Exception) {
+func RespondError(kongArgs KongArgs, c *app.RequestContext, except Exception) {
 	detail := ""
 	if env.InLocal() {
 		detail = except.RawError
 	}
 	c.JSON(except.StatusCode, ErrorResponse{
 		Meta: &ResponseMetaData{
-			RequestId: logid.LogId(ctx),
+			RequestId: kongArgs.RequestId,
 			Error: &ErrorObj{
 				Message: except.Message,
 				Detail:  detail,

@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/dcalsky/kong_service_demo/internal/common/env"
 	"github.com/dcalsky/kong_service_demo/internal/common/logid"
 )
 
@@ -30,9 +29,6 @@ func newZapLogger(level zapcore.LevelEnabler) *zap.Logger {
 	options := []zap.Option{
 		zap.AddCaller(),
 		zap.AddCallerSkip(1),
-	}
-	if env.InLocal() {
-		options = append(options, zap.AddStacktrace(zapcore.ErrorLevel))
 	}
 	return zap.New(core, options...)
 }

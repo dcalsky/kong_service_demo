@@ -17,11 +17,12 @@ func ExceptionGuard() app.HandlerFunc {
 			if panicData := recover(); panicData != nil {
 				logs.Errorf(ctx, "[ExceptionGuard] stack: %s", getStack(1<<12))
 				logs.Errorf(ctx, "[ExceptionGuard] panic data: %v", panicData)
+				kongArgs := base.GetKongArgs(ctx, c)
 				if e, ok := panicData.(base.Exception); ok {
-					base.RespondError(ctx, c, e)
+					base.RespondError(kongArgs, c, e)
 					return
 				}
-				base.RespondJson(ctx, c, base.InternalError.WithRawError(fmt.Errorf("%v", panicData)))
+				base.RespondJson(kongArgs, c, base.InternalError.WithRawError(fmt.Errorf("%v", panicData)))
 				return
 			}
 		}()
