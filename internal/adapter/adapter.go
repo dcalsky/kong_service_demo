@@ -12,6 +12,7 @@ import (
 var (
 	db              *gorm.DB
 	KongServiceRepo repo.IKongServiceRepo
+	AccountRepo     repo.IAccountRepo
 )
 
 func MustInit() {
@@ -27,6 +28,7 @@ func MustInit() {
 		panic("failed to connect database")
 	}
 	KongServiceRepo = repo.NewKongServiceRepo(db.Table(entity.KongService{}.TableName()))
+	AccountRepo = repo.NewAccountRepo(db.Table(entity.Account{}.TableName()))
 }
 
 func Release() {

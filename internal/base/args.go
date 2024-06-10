@@ -12,10 +12,10 @@ const (
 	KongAccountIdKey = "KONG_ACCOUNT_ID"
 )
 
-type KongAccountId string
+type KongAccountId uint
 
-func (s KongAccountId) String() string {
-	return string(s)
+func (s KongAccountId) Uint() uint {
+	return uint(s)
 }
 
 type KongArgs struct {
@@ -32,7 +32,11 @@ func GetKongArgs(ctx context.Context, c *app.RequestContext) KongArgs {
 		TraceInfo: TraceInfo{
 			RequestId: logid.LogId(ctx),
 		},
-		AccountId: KongAccountId(c.GetString(KongAccountIdKey)),
+		AccountId: KongAccountId(c.GetUint(KongAccountIdKey)),
 	}
 	return out
+}
+
+func SetKongArgsAccountId(c *app.RequestContext, accountId uint) {
+	c.Set(KongAccountIdKey, accountId)
 }
