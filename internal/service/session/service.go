@@ -46,7 +46,7 @@ func NewSessionService(accountRepo repo.IAccountRepo, secret string) ISessionSer
 func (s *sessionService) generateJwt(account entity.Account) string {
 	claims := jwtClaimsPool.Get().(*dto.JwtClaims)
 	claims.ExpiredAt = time.Now().Add(expiresDuration)
-	claims.AccountId = uint(account.Id)
+	claims.AccountId = uint(account.ID)
 	claims.Email = account.Email
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(s.secretBytes)
 	jwtClaimsPool.Put(claims)
@@ -63,7 +63,7 @@ func (s *sessionService) Login(ctx context.Context, req dto.LoginRequest) dto.Lo
 	base.PanicIf(account == nil, base.Unauthorized.WithRawError(fmt.Errorf("account not found, email: %s", req.Email)))
 
 	if !checkPasswordHash(req.Password, account.Password) {
-		panic(base.Unauthorized.WithRawError(fmt.Errorf("password not match, email: %s, account id: %d", req.Email, account.Id)))
+		panic(base.Unauthorized.WithRawError(fmt.Errorf("password not match, email: %s, account id: %d", req.Email, account.ID)))
 	}
 
 	token := s.generateJwt(*account)
@@ -77,6 +77,14 @@ func (s *sessionService) Register(ctx context.Context, req dto.RegisterRequest) 
 	s.validator.ValidateRegisterRequest(req)
 	hashedPassword, err := hashPassword(req.Password)
 	base.PanicIfErr(err, base.InternalError.WithRawError(err))
+
+	existedAccount, err := s.accountRepo.DescribeAccountByEmail(ctx, req.Email)
+	base.PanicIfErr(err, base.InternalError.WithRawError(err))
+
+	if existedAccount != nil {
+		panic(base.AccountEmailHasBeenTaken.WithRawError(fmt.Errorf("email: %s", req.Email)))
+	}
+
 	account := entity.NewAccount(req.Email, req.NickName, hashedPassword)
 	err = s.accountRepo.CreateAccount(ctx, &account)
 	base.PanicIfErr(err, base.InternalError.WithRawError(err))

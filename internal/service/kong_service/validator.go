@@ -2,6 +2,7 @@ package kong_service
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/dcalsky/kong_service_demo/internal/base"
 	"github.com/dcalsky/kong_service_demo/internal/model/dto"
@@ -36,4 +37,9 @@ func (validator) validateKongServiceName(name string) {
 
 func (validator) validateKongServiceId(id uint) {
 	base.PanicIf(id == 0, base.InvalidKongServiceId.WithRawError(fmt.Errorf("id: %d", id)))
+}
+
+func (validator) ValidateCreateVersion(req dto.CreateKongServiceVersionRequest) {
+	changelogLen := utf8.RuneCountInString(req.Changelog)
+	base.PanicIf(changelogLen < 6, base.InvalidChangelogLength.WithRawError(fmt.Errorf("changelog: %s", req.Changelog)))
 }

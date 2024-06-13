@@ -60,3 +60,23 @@ func ListKongServices(ctx context.Context, c *app.RequestContext) {
 	data := service.KongServiceSvc.ListKongServices(ctx, args, req)
 	base.RespondJson(args, c, data)
 }
+
+func CreateKongServiceVersion(ctx context.Context, c *app.RequestContext) {
+	var req dto.CreateKongServiceVersionRequest
+	err := c.BindAndValidate(&req)
+	base.PanicIfErr(err, base.InvalidParamErr.WithRawError(fmt.Errorf("invalid req: %+v, err: %v", req, err)))
+
+	args := base.GetKongArgs(ctx, c)
+	data := service.KongServiceSvc.CreateKongServiceVersion(ctx, args, req)
+	base.RespondJson(args, c, data)
+}
+
+func SwitchKongServiceVersion(ctx context.Context, c *app.RequestContext) {
+	var req dto.SwitchKongServiceVersionRequest
+	err := c.BindAndValidate(&req)
+	base.PanicIfErr(err, base.InvalidParamErr.WithRawError(fmt.Errorf("invalid req: %+v, err: %v", req, err)))
+
+	args := base.GetKongArgs(ctx, c)
+	service.KongServiceSvc.SwitchKongServiceVersion(ctx, args, req)
+	base.RespondJson(args, c, dto.EmptyResponse{})
+}

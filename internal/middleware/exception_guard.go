@@ -34,7 +34,7 @@ func ExceptionGuard() app.HandlerFunc {
 
 func getStack() []byte {
 	buf := bytes.NewBuffer(make([]byte, 0, 2048))
-	pc := make([]uintptr, 12)
+	pc := make([]uintptr, 16)
 	n := runtime.Callers(3, pc)
 	if n == 0 {
 		return make([]byte, 0)

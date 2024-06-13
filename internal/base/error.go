@@ -16,6 +16,11 @@ var (
 	PasswordLengthErr   = NewException(400, "InvalidParam.PasswordLengthErr", "The length of password must be controlled by 8-20.")
 	EmailFormatErr      = NewException(400, "InvalidParam.EmailFormatErr", "The email format is invalid.")
 
-	AuthenticationDenied  = NewException(401, "Unauthorized.AuthenticationDenied", "Authentication denied.")   // expect retry
-	AuthenticationExpired = NewException(440, "Unauthorized.AuthenticationExpired", "Authentication expired.") // expect retry
+	AuthenticationDenied                  = NewException(401, "Unauthorized.AuthenticationDenied", "Authentication denied.")   // expect retry
+	AuthenticationExpired                 = NewException(440, "Unauthorized.AuthenticationExpired", "Authentication expired.") // expect retry
+	NoPermissionToOperateKongService      = NewException(403, "PermissionDenied.NoPermissionToOperateKongService", "You have no permission to operate this service.")
+	InvalidChangelogLength                = NewException(400, "InvalidParam.InvalidChangelogLength", "The changelog length is invalid.")
+	ForbidSwitchVersionNotBelongToService = NewException(403, "PermissionDenied.ForbidSwitchVersionNotBelongToService", "The specified version is not belong to the service.")
+	HasJoinedOrganization                 = NewException(403, "PermissionDenied.HasJoinedOrganization", "You have joined an organization.")
+	AccountEmailHasBeenTaken              = NewException(400, "InvalidParam.AccountEmailHasBeenTaken", "The email has been registered, try another one.")
 )

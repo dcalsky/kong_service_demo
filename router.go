@@ -30,17 +30,28 @@ func registerHttp(r *server.Hertz) {
 	})
 
 	v1 := r.Group("/api/v1")
-	jwtValidator := middleware.JwtValidator(config.Conf.KongSecret)
-	constrainedV1 := v1.Group("", jwtValidator)
-	{
-		constrainedV1.POST("/CreateKongService", handler.CreateKongService)
-		constrainedV1.POST("/DescribeKongService", handler.DescribeKongService)
-		constrainedV1.POST("/DeleteKongService", handler.DeleteKongService)
-		constrainedV1.POST("/ListKongServices", handler.ListKongServices)
-		constrainedV1.POST("/UpdateKongService", handler.UpdateKongService)
-	}
+	// no auth
 	{
 		v1.POST("/Register", handler.Register)
 		v1.POST("/Login", handler.Login)
+	}
+	jwtValidator := middleware.JwtValidator(config.Conf.KongSecret)
+	v1.Use(jwtValidator)
+	// kong service
+	{
+		v1.POST("/CreateKongService", handler.CreateKongService)
+		v1.POST("/DescribeKongService", handler.DescribeKongService)
+		v1.POST("/DeleteKongService", handler.DeleteKongService)
+		v1.POST("/ListKongServices", handler.ListKongServices)
+		v1.POST("/UpdateKongService", handler.UpdateKongService)
+		v1.POST("/CreateKongServiceVersion", handler.CreateKongServiceVersion)
+		v1.POST("/SwitchKongServiceVersion", handler.SwitchKongServiceVersion)
+	}
+	// organization
+	{
+		v1.POST("/CreateOrganization", handler.CreateOrganization)
+		v1.POST("/DescribeOrganization", handler.DescribeOrganization)
+		v1.POST("/AddAccountToOrganization", handler.AddAccountToOrganization)
+		v1.POST("/RemoveAccountFromOrganization", handler.RemoveAccountFromOrganization)
 	}
 }

@@ -11,11 +11,16 @@ import (
 
 const (
 	sortByDescPrefix = "-"
+	defaultPageSize  = 10
+	defaultPageNum   = 1
 )
 
 func BuildGormPagination(tx *gorm.DB, option *dto.PagingOption) {
 	if option == nil {
-		return
+		option = &dto.PagingOption{
+			PageSize: defaultPageSize,
+			PageNum:  defaultPageNum,
+		}
 	}
 	tx.Offset(int(option.Skip()))
 	tx.Limit(int(option.PageSize))
@@ -33,4 +38,22 @@ func BuildGormSortBy(tx *gorm.DB, sortBy []string) {
 			tx.Order(clause.OrderByColumn{Column: clause.Column{Name: afterSortValue}, Desc: false})
 		}
 	}
+}
+
+func BuildPageResult(tx *gorm.DB, option *dto.PagingOption) dto.PagingResult {
+	if option == nil {
+		option = &dto.PagingOption{
+			PageSize: defaultPageSize,
+			PageNum:  defaultPageNum,
+		}
+	}
+	res := dto.PagingResult{
+		PageSize: option.PageSize,
+		PageNum:  option.PageNum,
+		Total:    0,
+	}
+	var total int64
+	tx.Count(&total)
+	res.Total = total
+	return res
 }

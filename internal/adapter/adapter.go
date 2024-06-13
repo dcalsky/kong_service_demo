@@ -1,6 +1,8 @@
 package adapter
 
 import (
+	"fmt"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -10,9 +12,10 @@ import (
 )
 
 var (
-	db              *gorm.DB
-	KongServiceRepo repo.IKongServiceRepo
-	AccountRepo     repo.IAccountRepo
+	db               *gorm.DB
+	KongServiceRepo  repo.IKongServiceRepo
+	AccountRepo      repo.IAccountRepo
+	OrganizationRepo repo.IOrganizationRepo
 )
 
 func MustInit() {
@@ -27,8 +30,20 @@ func MustInit() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	KongServiceRepo = repo.NewKongServiceRepo(db.Table(entity.KongService{}.TableName()))
-	AccountRepo = repo.NewAccountRepo(db.Table(entity.Account{}.TableName()))
+	KongServiceRepo = repo.NewKongServiceRepo(db)
+	AccountRepo = repo.NewAccountRepo(db)
+	OrganizationRepo = repo.NewOrganizationRepo(db)
+
+	err = db.AutoMigrate(
+		&entity.KongServiceVersion{},
+		&entity.KongService{},
+		&entity.Account{},
+		&entity.Organization{},
+		&entity.OrganizationAccountMapping{},
+	)
+	if err != nil {
+		panic(fmt.Errorf("failed to migrate database: %w", err))
+	}
 }
 
 func Release() {
