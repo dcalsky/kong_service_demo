@@ -4,11 +4,10 @@ import (
 	"context"
 	"time"
 
-	"gorm.io/gorm"
-
 	"github.com/dcalsky/kong_service_demo/internal/model/entity"
 )
 
+//go:generate mockgen -package repo --build_flags=--mod=mod  --destination organization_mock.go . IOrganizationRepo
 type IOrganizationRepo interface {
 	AddAccountToOrganization(ctx context.Context, accountId entity.AccountId, organization entity.OrganizationId) error
 	RemoveAccountFromOrganization(ctx context.Context, accountId entity.AccountId, organization entity.OrganizationId) error
@@ -18,10 +17,10 @@ type IOrganizationRepo interface {
 }
 
 type organizationRepo struct {
-	db *gorm.DB
+	db IRepoHelper
 }
 
-func NewOrganizationRepo(db *gorm.DB) IOrganizationRepo {
+func NewOrganizationRepo(db IRepoHelper) IOrganizationRepo {
 	s := &organizationRepo{
 		db: db,
 	}
@@ -55,6 +54,6 @@ func (s *organizationRepo) DescribeOrganizationById(ctx context.Context, organiz
 
 func (s *organizationRepo) ListOrganizationMembers(ctx context.Context, organizationId entity.OrganizationId) []entity.AccountId {
 	var accountIds []entity.AccountId
-	s.db.Model(&entity.OrganizationAccountMapping{}).WithContext(ctx).Where("OrganizationId = ?", organizationId).Pluck("AccountId", &accountIds)
+	s.db.WithContext(ctx).Model(&entity.OrganizationAccountMapping{}).WithContext(ctx).Where("OrganizationId = ?", organizationId).Pluck("AccountId", &accountIds)
 	return accountIds
 }

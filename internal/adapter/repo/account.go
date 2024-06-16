@@ -9,6 +9,7 @@ import (
 	"github.com/dcalsky/kong_service_demo/internal/model/entity"
 )
 
+//go:generate mockgen -package repo --build_flags=--mod=mod  --destination account_mock.go . IAccountRepo
 type IAccountRepo interface {
 	CreateAccount(ctx context.Context, account *entity.Account) error
 	DescribeAccountByEmail(ctx context.Context, email string) (*entity.Account, error)
@@ -22,10 +23,10 @@ type ListAccountsRequest struct {
 }
 
 type accountRepo struct {
-	db *gorm.DB
+	db IRepoHelper
 }
 
-func NewAccountRepo(db *gorm.DB) IAccountRepo {
+func NewAccountRepo(db IRepoHelper) IAccountRepo {
 	s := &accountRepo{
 		db: db,
 	}
@@ -62,7 +63,7 @@ func (s *accountRepo) DescribeAccountById(ctx context.Context, id entity.Account
 
 func (s *accountRepo) IsAccountInOrganization(ctx context.Context, accountId entity.AccountId, organizationId entity.OrganizationId) (bool, error) {
 	var res int64
-	err := s.db.Model(&entity.OrganizationAccountMapping{}).WithContext(ctx).Where("AccountId = ? and OrganizationId = ?", accountId, organizationId).Count(&res).Error
+	err := s.db.WithContext(ctx).Model(&entity.OrganizationAccountMapping{}).Where("AccountId = ? and OrganizationId = ?", accountId, organizationId).Count(&res).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil

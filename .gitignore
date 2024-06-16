@@ -1,3 +1,6 @@
 .idea
 .DS_Store
 kong.db
+coverage.html
+coverage.out
+coverage.out.tmp

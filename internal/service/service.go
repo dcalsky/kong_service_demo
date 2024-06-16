@@ -15,7 +15,7 @@ var (
 )
 
 func MustInit() {
-	KongServiceSvc = kong_service.NewKongService(adapter.KongServiceRepo, adapter.AccountRepo)
+	KongServiceSvc = kong_service.NewKongService(adapter.KongServiceRepo, adapter.AccountRepo, adapter.RepoHelper)
 	SessionSvc = session.NewSessionService(adapter.AccountRepo, config.Conf.KongSecret)
 	OrganizationSvc = organization.NewOrganizationService(adapter.AccountRepo, adapter.OrganizationRepo)
 }

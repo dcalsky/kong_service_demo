@@ -23,6 +23,7 @@ var (
 	expiresDuration = time.Hour * 7 // expires in 7 days
 )
 
+//go:generate mockgen -package session --build_flags=--mod=mod  --destination service_mock.go . ISessionService
 type ISessionService interface {
 	generateJwt(account entity.Account) string
 	Login(ctx context.Context, req dto.LoginRequest) dto.LoginResponse

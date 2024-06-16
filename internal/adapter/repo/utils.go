@@ -13,6 +13,7 @@ const (
 	sortByDescPrefix = "-"
 	defaultPageSize  = 10
 	defaultPageNum   = 1
+	txKey            = "KONG_TX"
 )
 
 func BuildGormPagination(tx *gorm.DB, option *dto.PagingOption) {

@@ -16,6 +16,7 @@ var (
 	KongServiceRepo  repo.IKongServiceRepo
 	AccountRepo      repo.IAccountRepo
 	OrganizationRepo repo.IOrganizationRepo
+	RepoHelper       repo.IRepoHelper
 )
 
 func MustInit() {
@@ -30,9 +31,10 @@ func MustInit() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	KongServiceRepo = repo.NewKongServiceRepo(db)
-	AccountRepo = repo.NewAccountRepo(db)
-	OrganizationRepo = repo.NewOrganizationRepo(db)
+	RepoHelper = repo.NewRepoHelper(db)
+	KongServiceRepo = repo.NewKongServiceRepo(RepoHelper)
+	AccountRepo = repo.NewAccountRepo(RepoHelper)
+	OrganizationRepo = repo.NewOrganizationRepo(RepoHelper)
 
 	err = db.AutoMigrate(
 		&entity.KongServiceVersion{},

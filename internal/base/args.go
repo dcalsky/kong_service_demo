@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	KongAccountIdKey = "KONG_ACCOUNT_ID"
+	KongAccountIdKey    = "KONG_ACCOUNT_ID"
+	KongAccountEmailKey = "KONG_ACCOUNT_EMAIL"
 )
 
 type KongAccountId uint
@@ -20,7 +21,8 @@ func (s KongAccountId) Uint() uint {
 
 type KongArgs struct {
 	TraceInfo
-	AccountId KongAccountId
+	AccountId    KongAccountId
+	AccountEmail string
 }
 
 type TraceInfo struct {
@@ -32,11 +34,15 @@ func GetKongArgs(ctx context.Context, c *app.RequestContext) KongArgs {
 		TraceInfo: TraceInfo{
 			RequestId: logid.LogId(ctx),
 		},
-		AccountId: KongAccountId(c.GetUint(KongAccountIdKey)),
+		AccountId:    KongAccountId(c.GetUint(KongAccountIdKey)),
+		AccountEmail: c.GetString(KongAccountEmailKey),
 	}
 	return out
 }
 
 func SetKongArgsAccountId(c *app.RequestContext, accountId uint) {
 	c.Set(KongAccountIdKey, accountId)
+}
+func SetKongArgsAccountEmail(c *app.RequestContext, email string) {
+	c.Set(KongAccountEmailKey, email)
 }
