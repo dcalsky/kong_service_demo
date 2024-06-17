@@ -4,3 +4,4 @@ kong.db
 coverage.html
 coverage.out
 coverage.out.tmp
+output/
