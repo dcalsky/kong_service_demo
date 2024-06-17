@@ -14,7 +14,7 @@ func getCompatRequest(req *protocol.Request) (*http.Request, error) {
 		return r, err
 	}
 
-	h := make(map[string][]string)
+	h := make(map[string][]string, req.Header.Len())
 	req.Header.VisitAll(func(k, v []byte) {
 		h[string(k)] = append(h[string(k)], string(v))
 	})
