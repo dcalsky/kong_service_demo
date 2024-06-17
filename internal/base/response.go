@@ -7,6 +7,7 @@ import (
 )
 
 type ErrorObj struct {
+	Code    string
 	Message string
 	Detail  string `json:",omitempty"`
 }
@@ -42,6 +43,7 @@ func RespondError(kongArgs KongArgs, c *app.RequestContext, except Exception) {
 		Meta: &ResponseMetaData{
 			RequestId: kongArgs.RequestId,
 			Error: &ErrorObj{
+				Code:    except.Code,
 				Message: except.Message,
 				Detail:  detail,
 			},
