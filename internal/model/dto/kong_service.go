@@ -27,18 +27,18 @@ type KongServiceForList struct {
 
 type KongServiceForDetail struct {
 	Id               uint
-	Name             string
-	Description      string
-	CurrentVersionId *uint
-	Versions         []KongServiceVersionForDetail
+	Name             string                        // the name of the service
+	Description      string                        // what is the service about
+	CurrentVersionId *uint                         // the id of the current version, optional
+	Versions         []KongServiceVersionForDetail // the versions of the service
 	CreatedAt        int64
 	UpdatedAt        int64
 }
 
 type CreateKongServiceRequest struct {
-	Name           string `json:",required"`
-	Description    string `json:",required"`
-	OrganizationId uint   `json:",required"`
+	Name           string `json:",required"` // the name of the service
+	Description    string `json:",required"` // what is the service about
+	OrganizationId uint   `json:",required"` // the organization the service wants to join
 }
 
 type CreateKongServiceResponse struct {
@@ -46,11 +46,11 @@ type CreateKongServiceResponse struct {
 }
 
 type ListKongServicesRequest struct {
-	Name        *string
-	Description *string
-	Fuzzy       *string
-	Pagination  *PagingOption
-	SortBy      []string
+	Name        *string       // fuzzy search by service name
+	Description *string       // fuzzy search by service description
+	Fuzzy       *string       // fuzzy search by both service name and description
+	Pagination  *PagingOption // the pagination option, default, page size: 10, page number: 1
+	SortBy      []string      // the sort option, default, sort by id. Supporting fields: ID, UpdatedAt, CreatedAt, Name. Add "-" prefix for descending order, Example: ["-CreatedAt", "Name"]
 }
 
 type ListKongServicesResponse struct {
