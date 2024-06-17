@@ -10,6 +10,7 @@ import (
 	"github.com/dcalsky/kong_service_demo/internal/model/entity"
 )
 
+//go:generate mockgen -package organization --build_flags=--mod=mod  --destination service_mock.go . IOrganizationService
 type IOrganizationService interface {
 	AddAccountToOrganization(ctx context.Context, kongArgs base.KongArgs, req dto.JoinOrganizationRequest)
 	RemoveAccountFromOrganization(ctx context.Context, kongArgs base.KongArgs, req dto.QuitOrganizationRequest)

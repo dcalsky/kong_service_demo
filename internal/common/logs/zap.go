@@ -8,12 +8,23 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	"github.com/dcalsky/kong_service_demo/internal/common/env"
 	"github.com/dcalsky/kong_service_demo/internal/common/logid"
 )
 
 var zapLogger *zap.Logger
+var logLevel string
 
-func MustInit(level zapcore.LevelEnabler) {
+func init() {
+	if env.InLocal() {
+		logLevel = os.Getenv("log-level")
+	} else {
+		logLevel = "info"
+	}
+	level, err := zapcore.ParseLevel(logLevel)
+	if err != nil {
+		level = zapcore.InfoLevel
+	}
 	zapLogger = newZapLogger(level)
 }
 

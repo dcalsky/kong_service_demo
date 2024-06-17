@@ -45,12 +45,13 @@ func JwtValidator(secret string) app.HandlerFunc {
 			panic(base.AuthenticationDenied.WithRawError(err))
 		}
 		if !token.Valid {
-			panic(base.AuthenticationDenied.WithRawError(fmt.Errorf("invalid token, token: %s", authorizationToken)))
+			panic(base.AuthenticationDenied.WithRawError(fmt.Errorf("invalid token")))
 		}
 		if claims.ExpiredAt.Before(time.Now()) {
 			panic(base.AuthenticationExpired)
 		}
 		base.SetKongArgsAccountId(ctx, claims.AccountId)
+		base.SetKongArgsAccountEmail(ctx, claims.Email)
 		ctx.Next(c)
 	}
 }

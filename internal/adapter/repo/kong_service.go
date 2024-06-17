@@ -10,6 +10,7 @@ import (
 	"github.com/dcalsky/kong_service_demo/internal/model/entity"
 )
 
+//go:generate mockgen -package repo --build_flags=--mod=mod  --destination kong_service_mock.go . IKongServiceRepo
 type IKongServiceRepo interface {
 	ListServices(ctx context.Context, req ListServicesRequest) ([]entity.KongService, dto.PagingResult, error)
 	DescribeService(ctx context.Context, id entity.KongServiceId) (*entity.KongService, error)
@@ -23,7 +24,7 @@ type IKongServiceRepo interface {
 }
 
 type kongServiceRepo struct {
-	db *gorm.DB
+	db IRepoHelper
 }
 
 type ListServicesRequest struct {
@@ -37,7 +38,7 @@ type ListServicesRequest struct {
 	All             bool
 }
 
-func NewKongServiceRepo(db *gorm.DB) IKongServiceRepo {
+func NewKongServiceRepo(db IRepoHelper) IKongServiceRepo {
 	s := &kongServiceRepo{
 		db: db,
 	}
@@ -107,7 +108,7 @@ func (s *kongServiceRepo) CountServicesVersionAmount(ctx context.Context, ids []
 	}
 	res := make(map[entity.KongServiceId]int)
 	var countResult []countResultItem
-	err := s.db.Raw(`select KongServiceId, count(*) as Amount from kong_service_version where KongServiceId in (?) group by KongServiceId`, ids).Scan(&countResult).Error
+	err := s.db.WithContext(ctx).Raw(`select KongServiceId, count(*) as Amount from kong_service_version where KongServiceId in (?) group by KongServiceId`, ids).Scan(&countResult).Error
 	if err != nil {
 		return res, err
 	}

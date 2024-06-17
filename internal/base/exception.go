@@ -52,3 +52,19 @@ func PanicIfErr(err error, exception Exception) {
 		panic(exception)
 	}
 }
+
+func Catch(f func()) (e *Exception) {
+	defer func() {
+		if panicData := recover(); panicData != nil {
+			if except, ok := panicData.(Exception); ok {
+				e = &except
+			} else {
+				temp := InternalError.WithRawError(fmt.Errorf("%v", panicData))
+				e = &temp
+			}
+			return
+		}
+	}()
+	f()
+	return
+}
